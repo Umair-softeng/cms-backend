@@ -134,4 +134,19 @@ class ComplaintsController extends Controller
             ]);
         }
     }
+
+    public function figures(){
+        $allComplaints = Complaints::count();
+        $newComplaints = Complaints::where('status', "New")->count();
+        $progressComplaints = Complaints::where('status', "In-Progress")->count();
+        $resolvedComplaints = Complaints::where('status', "Resolved")->count();
+
+        return response()->json([
+            'allComplaints' => $allComplaints,
+            'newComplaints' => $newComplaints,
+            'progressComplaints' => $progressComplaints,
+            'resolvedComplaints' => $resolvedComplaints,
+
+        ]);
+    }
 }
