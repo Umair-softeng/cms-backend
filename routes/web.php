@@ -31,6 +31,9 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::delete('/complaint/{complaintID}', [\App\Http\Controllers\API\ComplaintsController::class, 'destroy']);
 
     Route::get('/dashboard/resolvedComparison', [\App\Http\Controllers\API\DashboardController::class, 'resolvedComparison']);
+    Route::get('/dashboard/priorityComparison', [\App\Http\Controllers\API\DashboardController::class, 'priorityComplaints']);
+    Route::get('/dashboard/statusComparison', [\App\Http\Controllers\API\DashboardController::class, 'statusComplaints']);
+    Route::get('/dashboard/allStatusComparison', [\App\Http\Controllers\API\DashboardController::class, 'allStatusComplaints']);
 
 
 });

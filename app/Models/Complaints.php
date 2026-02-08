@@ -32,7 +32,6 @@ class Complaints extends Model
 
     protected function getComplaintStatistics(){
         $year = 2026;
-
         $months = [
             1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
             5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
@@ -51,6 +50,37 @@ class Complaints extends Model
           FROM complaints
           WHERE YEAR(created_at) = {$year}";
 
+        $result = DB::select($query);
+
+        return $result;
+    }
+
+    protected function getComplaintStatusStatistics(){
+        $year = 2026;
+
+        $months = [
+            1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
+            5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
+            9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+        ];
+
+        $statuses = ['New', 'In-Progress', 'Resolved', 'Dropped'];
+
+        $caseStatements = [];
+
+        foreach ($months as $num => $name) {
+            foreach ($statuses as $status) {
+                // For example: SUM(CASE WHEN MONTH(created_at) = 1 AND status='New' THEN 1 ELSE 0 END) AS January_New
+                $caseStatements[] = "SUM(CASE WHEN MONTH(created_at) = {$num} AND status = '{$status}' THEN 1 ELSE 0 END) AS `{$name}_{$status}`";
+            }
+        }
+
+        // Build query
+        $query = "SELECT " . implode(", ", $caseStatements) . "
+          FROM complaints
+          WHERE YEAR(created_at) = {$year}";
+
+        // Execute
         $result = DB::select($query);
 
         return $result;
