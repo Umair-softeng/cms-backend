@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('complaintImages', function (Blueprint $table) {
-            $table->id('complaintImageID');
-            $table->string('image');
+        Schema::create('remarksHistory', function (Blueprint $table) {
+            $table->id('remarksHistoryID');
             $table->foreignId('complaintID')->constrained('complaints', 'complaintID');
+            $table->longText('remarks');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('complaintImages');
+        Schema::dropIfExists('remarksHistory');
     }
 };

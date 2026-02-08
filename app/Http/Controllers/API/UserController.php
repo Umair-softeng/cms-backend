@@ -3,15 +3,20 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
+use App\Models\Branches;
+use App\Models\Complaints;
+use App\Models\Module;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-
     public function index()
     {
         $users = User::with('roles')->get();
@@ -31,94 +36,87 @@ class UserController extends Controller
         }
     }
 
+    public function cardData(){
+        $totalUsers = User::count();
+        $totalActive = User::where('status', 'Active')->count();
+        $totalInActive = User::where('status', 'In-Active')->count();
+        $totalRoles = Role::count();
+        return response()->json([
+            'totalUsers' => $totalUsers,
+            'totalActive' => $totalActive,
+            'totalInActive' => $totalInActive,
+            'totalRoles' => $totalRoles,
+        ]);
+    }
 
-    public function store(UserCreateRequest $request)
+    public function store(UserStoreRequest $request)
     {
         DB::beginTransaction();
+
         try {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'status' => "Active",
-                'departmentID' => $request->departmentID,
-                'mobileNo' => $request->mobileNo,
-            ]);
-            if ($request->roleID) {
+            // Create user (safe mass assignment)
+            $user = User::create($request->validated());
+
+            // Assign role if provided
+            if ($request->filled('roleID')) {
                 $role = Role::findOrFail($request->roleID);
                 $user->assignRole($role);
             }
 
             DB::commit();
-            return redirect()->route('admin.users.index')->with('toast_message', 'User Created Successfully..!!');
-        } catch (\Exception $e){
-            DB::rollback();
-            throw $e;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User created successfully',
+                'user' => $user->fresh('roles'),
+            ], 201); // ✅ CREATED
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create user',
+                // 'error' => $e->getMessage(), // enable only in dev
+            ], 500);
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(User $user)
     {
-        $departments = Departments::all();
-        $roles = Role::all();
+        if ($user){
+            return response()->json([
+                'user' => $user->load(['roles', 'branch']),
+            ]);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ]);
+        }
 
-        $newComplaints = Complaint::where('userID', $user->id)->where('status', 'New')->sum('complaintID');
-        $progressComplaints = Complaint::where('userID', $user->id)->where('status', 'In-Progress')->sum('complaintID');
-        $resolvedComplaints = Complaint::where('userID', $user->id)->where('status', 'Resolved')->sum('complaintID');
-        $droppedComplaints = Complaint::where('userID', $user->id)->where('status', 'Dropped')->sum('complaintID');
-        $breadcrumbs = [
-            "Users" => route("admin.users.index"),
-            "Users Details" => '',
-        ];
-        return view('admin.user.show', compact('user', 'departments', 'roles', 'newComplaints', 'progressComplaints', 'resolvedComplaints', 'droppedComplaints', 'breadcrumbs'));
+
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        $departments = Departments::all();
-        $roles = Role::all();
-        $breadcrumbs = [
-            "Users" => route("admin.users.index"),
-            "Users Edit" => '',
-        ];
-        return view('admin.user.edit', compact('user', 'departments', 'roles', 'breadcrumbs'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UserUpdateRequest $request, User $user)
     {
         DB::beginTransaction();
         try {
-            $user->update([
-                "name" => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'status' => "Active",
-                'departmentID' => $request->departmentID,
-                'mobileNo' => $request->mobileNo,
-            ]);
-
-            if ($user->system_reserve) {
-                return redirect()->route('admin.users.index')->with('toast_message' , 'This user cannot be update, It is system reserved..!!');
-            }
-
+            $user->update($request->all());
             if (isset($request->roleID)) {
                 $role = Role::find($request->roleID);
                 $user->syncRoles($role);
             }
 
             DB::commit();
-            return redirect()->route('admin.users.index')->with('toast_message', 'User Updated Successfully');
+            return response()->json([
+                'success' => true,
+                'data' => $user->load(['roles', 'branch']),
+                'message' => 'User updated successfully.'
+            ]);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
             DB::rollback();
 
@@ -126,26 +124,51 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(User $user)
     {
-        $user->delete();
-        return redirect()->route('admin.users.index')->with('toast_message', 'User Deleted Successfully..!!');
+        // Prevent deletion of system reserved users
+        if ($user->system_reserve == 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This user is system reserved and cannot be deleted',
+            ], 403);
+        }
 
+        try {
+            $user->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'User deleted successfully',
+            ], 200);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete user',
+                // 'error' => $e->getMessage(), // enable in dev
+            ], 500);
+        }
     }
+
 
     public function status(Request $request, $id)
     {
-        try {
-            $user = User::findOrFail($id);
-            $user->update(['status' => $request->status]);
-            return json_encode(["resp" => $user]);
+        $user = User::findOrFail($id);
 
-        } catch (\Exception $e) {
-
-            throw $e;
+        if ($user->system_reserve == 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This user is system reserved and cannot be updated',
+            ], 403); // 🔴 IMPORTANT
         }
+
+        $user->update(['status' => $request->status]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated successfully',
+            'user' => $user->fresh(),
+        ]);
     }
+
 }

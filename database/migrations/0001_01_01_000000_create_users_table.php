@@ -19,8 +19,6 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('status', ['Active', 'In-Active'])->default('Active');
             $table->integer('system_reserve')->default(0);
-            $table->string('mobileNo')->nullable();
-            $table->string('image')->nullable();
             $table->foreignId('branchID')->nullable()->constrained('branches', 'branchID')->nullOnDelete();
             $table->rememberToken();
             $table->timestamps();

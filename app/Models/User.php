@@ -17,6 +17,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'status',
+        'branchID',
+        'system_reserve'
     ];
 
     protected $hidden = [
@@ -33,7 +36,7 @@ class User extends Authenticatable
     }
 
     public function branch(){
-        return $this->belongsTo(Branches::class);
+        return $this->belongsTo(Branches::class, 'branchID', 'branchID');
     }
 
     public function complaints(){

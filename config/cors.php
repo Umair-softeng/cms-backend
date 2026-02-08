@@ -5,7 +5,8 @@ return [
         'login',
         'logout',
         'sanctum/csrf-cookie',
-        'api/*'
+        'api/*',
+        'admin/*'
     ],
 
     'allowed_methods' => ['*'],

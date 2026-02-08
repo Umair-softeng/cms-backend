@@ -249,30 +249,6 @@ class RoleSeeder extends Seeder
 
             ],
 
-            'Dashboard' => [
-                'actions' => [
-                    'Index'   => 'dashboard.index',
-                ],
-                'roles' => [
-                    RoleEnum::SUPER_ADMIN => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Encroachment => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Electric => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Fire => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Building => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Transport => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Sanitation => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Taxation => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Health => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::AdminBranch => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Mt => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Account => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Engineering => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Veterinary => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Library => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Schools => ['Index', 'Create', 'Edit', 'Trash'],
-                    RoleEnum::Law => ['Index', 'Create', 'Edit', 'Trash'],
-                ],
-            ],
         ];
 
         // Reset cached roles and permissions

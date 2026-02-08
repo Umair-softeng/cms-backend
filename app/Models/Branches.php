@@ -14,10 +14,10 @@ class Branches extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'branchID', 'branchID');
     }
 
     public function complaints(){
-        return $this->hasMany(Complaints::class);
+        return $this->hasMany(Complaints::class, 'branchID', 'branchID');
     }
 }
