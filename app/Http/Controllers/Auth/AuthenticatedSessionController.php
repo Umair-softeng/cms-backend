@@ -41,9 +41,11 @@ class AuthenticatedSessionController extends Controller
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
-        return response()->noContent();
+        return response()->noContent()
+            ->withoutCookie('laravel_session')
+            ->withoutCookie('XSRF-TOKEN');
     }
+
 }

@@ -126,22 +126,38 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        // Prevent deletion of system reserved users
-        if ($user->system_reserve == 1) {
+        // ⛔ Prevent deletion of system reserved users
+        if ((int) $user->system_reserve === 1) {
             return response()->json([
                 'success' => false,
                 'message' => 'This user is system reserved and cannot be deleted',
             ], 403);
         }
 
+        DB::beginTransaction();
+
         try {
+            // ✅ Detach all roles (model_has_roles)
+            $user->roles()->detach();
+
+            // Optional: detach permissions if you use direct permissions on users
+            if (method_exists($user, 'permissions')) {
+                $user->permissions()->detach();
+            }
+
+            // ✅ Delete user
             $user->delete();
+
+            DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'User deleted successfully',
-            ], 200);
+            ]);
 
         } catch (\Throwable $e) {
+            DB::rollBack();
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete user',
@@ -149,7 +165,6 @@ class UserController extends Controller
             ], 500);
         }
     }
-
 
     public function status(Request $request, $id)
     {

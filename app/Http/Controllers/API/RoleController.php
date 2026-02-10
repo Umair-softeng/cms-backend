@@ -13,6 +13,7 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+    //All Roles
     public function index()
     {
         $roles = Role::where('id', '!=', 1)->with('permissions')->get();
@@ -30,6 +31,7 @@ class RoleController extends Controller
         }
     }
 
+    //Roles Card Data
     public function roleCardData(){
         $totalUsers = User::count();
         $totalActive = User::where('status', 'Active')->count();
@@ -42,6 +44,8 @@ class RoleController extends Controller
             'totalRoles' => $totalRoles,
         ]);
     }
+
+    //Getting All Moduules
     public function getModules()
     {
         $modules = Module::all();
@@ -57,6 +61,8 @@ class RoleController extends Controller
             ]);
         }
     }
+
+    //Store Role Data
     public function store(RoleStoreRequest $request)
     {
         DB::beginTransaction();
@@ -83,6 +89,7 @@ class RoleController extends Controller
         }
     }
 
+    //Edited Role
     public function edit(Role $role)
     {
         $role->load('permissions');
@@ -94,15 +101,16 @@ class RoleController extends Controller
         return view('admin.role.edit', compact('role', 'modules', 'breadcrumbs'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+   //Role Update
     public function update(RoleUpdateRequest $request, Role $role)
     {
         DB::beginTransaction();
 
         try {
-            $role->syncPermissions($request['permissions']);
+            $permissions = is_array($request->permissions)
+                ? $request->permissions
+                : explode(',', $request->permissions);
+            $role->syncPermissions($permissions);
             $role->update($request->all());
 
             DB::commit();
@@ -122,16 +130,41 @@ class RoleController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Role $role)
+    //Role Deletion
+    public function destroy($id)
     {
-        $role->delete();
+        $role = Role::find($id);
+
+        // Already deleted / invalid id
+        if (!$role) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Role already deleted.'
+            ]);
+        }
+
+        // ⛔ system reserved role protection
+        if ((int) $role->system_reserve == 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This role is system reserved and cannot be deleted.'
+            ], 403);
+        }
+
+        DB::transaction(function () use ($role) {
+            // remove role from all models (users, admins, etc.)
+            DB::table('model_has_roles')
+                ->where('role_id', $role->id)
+                ->delete();
+
+            // role_has_permissions is auto-cleaned by Spatie
+            $role->delete();
+        });
+
         return response()->json([
             'success' => true,
             'message' => 'Role deleted successfully.'
-
         ]);
     }
+
 }
