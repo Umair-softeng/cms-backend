@@ -6,9 +6,9 @@ use App\Helpers\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ComplaintRegister;
 use App\Models\Branches;
-use App\Models\Complaint;
 use App\Models\Complaints;
 use App\Models\ComplaintImages;
+use App\Models\Feedback;
 use App\Models\RemarksHistory;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -238,5 +238,42 @@ class ComplaintsController extends Controller
         ], 200);
     }
 
+    //Complaint Feedback
+    public function feedback(Request $request){
+        DB::beginTransaction();
+        try {
+            Feedback::create([
+               'name' => (string) $request['name'],
+               'location' => (string) $request['location'],
+               'rating' => (int) $request['rating'],
+               'feedback' => (string) $request['feedback'],
+            ]);
+            DB::commit();
 
+            return response()->json([
+                'success' => true,
+                'message' => 'Feedback added successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    //Complaint Feedback Data
+    public function feedbackData(){
+        $feedbacks = Feedback::all();
+        if ($feedbacks) {
+            return response()->json($feedbacks);
+        }else{
+            return response()->json([
+                'status' => 404,
+                'message' => 'No Record Found'
+            ]);
+        }
+    }
 }

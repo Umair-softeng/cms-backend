@@ -8,6 +8,8 @@ Route::post('/complaint/register', [ComplaintsController::class, 'register']);
 Route::get('/track-complaint/{trackingID}', [ComplaintsController::class, 'trackComplaint']);
 Route::get('/track-cnic/{cnic}', [ComplaintsController::class, 'trackCnic']);
 Route::get('/complaint/figures', [ComplaintsController::class, 'figures']);
+Route::post('/complaint/feedback',[\App\Http\Controllers\API\ComplaintsController::class, 'feedback']);
+Route::get('/complaint/feedback-data',[\App\Http\Controllers\API\ComplaintsController::class, 'feedbackData']);
 Route::post('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
 Route::post('/logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth:sanctum');
@@ -29,7 +31,6 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::post('/complaint/update-status', [\App\Http\Controllers\API\ComplaintsController::class, 'updateStatus'])->name('complaint.status');
     Route::post('/complaint/update-branch', [\App\Http\Controllers\API\ComplaintsController::class, 'updateBranch'])->name('complaint.branch');
     Route::delete('/complaint/{complaintID}', [\App\Http\Controllers\API\ComplaintsController::class, 'destroy']);
-
     Route::get('/dashboard/resolvedComparison', [\App\Http\Controllers\API\DashboardController::class, 'resolvedComparison']);
     Route::get('/dashboard/priorityComparison', [\App\Http\Controllers\API\DashboardController::class, 'priorityComplaints']);
     Route::get('/dashboard/statusComparison', [\App\Http\Controllers\API\DashboardController::class, 'statusComplaints']);
