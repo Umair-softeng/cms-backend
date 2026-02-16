@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ComplaintRegister extends FormRequest
 {
@@ -15,7 +16,15 @@ class ComplaintRegister extends FormRequest
     {
         return [
             'name' => 'required',
-            'cnic' => 'required|unique:complaints,cnic|min:13|max:13',
+            'cnic' => [
+                'required',
+                'min:13',
+                'max:13',
+                Rule::when(
+                    request('cnic') !== '0000000000000',
+                    Rule::unique('complaints', 'cnic')
+                ),
+            ],
             'mobileNo' => 'required|min:11|max:11',
             'branchID' => 'required',
             'complaint' => 'required|min:50',
