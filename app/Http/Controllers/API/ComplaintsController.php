@@ -151,7 +151,7 @@ class ComplaintsController extends Controller
         $complaints = Complaints::all();
         if ($complaints) {
             return response()->json([
-                'complaints' => $complaints->load(['branch', 'images']),
+                'complaints' => $complaints->load(['branch', 'images', 'remarksHistories']),
                 'status' => 200,
                 'success' => true,
             ]);
