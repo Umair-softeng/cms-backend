@@ -82,7 +82,6 @@ class UserController extends Controller
         }
     }
 
-
     public function show(User $user)
     {
         if ($user){
@@ -183,6 +182,16 @@ class UserController extends Controller
             'success' => true,
             'message' => 'Status updated successfully',
             'user' => $user->fresh(),
+        ]);
+    }
+
+    public function loggedUser()
+    {
+        $user = Auth::user()->load('roles');
+
+        return response()->json([
+            'success' => true,
+            'data' => $user,
         ]);
     }
 

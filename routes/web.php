@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
         ]);
     });
     Route::resource('/users', \App\Http\Controllers\API\UserController::class);
+    Route::get('/loggedUser', [\App\Http\Controllers\API\UserController::class, 'loggedUser']);
     Route::put('user/status/{id}', [\App\Http\Controllers\API\UserController::class, 'status']);
     Route::get('user-card', [\App\Http\Controllers\API\UserController::class, 'cardData']);
 

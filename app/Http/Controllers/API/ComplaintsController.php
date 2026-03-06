@@ -130,11 +130,19 @@ class ComplaintsController extends Controller
 
     //Getting Complaint Figures
     public function figures(){
-        $allComplaints = Complaints::count();
-        $newComplaints = Complaints::where('status', "New")->count();
-        $progressComplaints = Complaints::where('status', "In-Progress")->count();
-        $resolvedComplaints = Complaints::where('status', "Resolved")->count();
-        $droppedComplaints = Complaints::where('status', "Dropped")->count();
+        if(Auth::user()->id === 1){
+            $allComplaints = Complaints::count();
+            $newComplaints = Complaints::where('status', "New")->count();
+            $progressComplaints = Complaints::where('status', "In-Progress")->count();
+            $resolvedComplaints = Complaints::where('status', "Resolved")->count();
+            $droppedComplaints = Complaints::where('status', "Dropped")->count();
+        }else{
+            $allComplaints = Complaints::where('userID', Auth::user()->id)->count();
+            $newComplaints = Complaints::where('userID', Auth::user()->id)->where('status', "New")->count();
+            $progressComplaints = Complaints::where('userID', Auth::user()->id)->where('status', "In-Progress")->count();
+            $resolvedComplaints = Complaints::where('userID', Auth::user()->id)->where('status', "Resolved")->count();
+            $droppedComplaints = Complaints::where('userID', Auth::user()->id)->where('status', "Dropped")->count();
+        }
 
         return response()->json([
             'allComplaints' => $allComplaints,
@@ -148,17 +156,17 @@ class ComplaintsController extends Controller
 
     //Getting All Complaints
     public function getComplaints(){
-        $complaints = Complaints::all();
-        if ($complaints) {
+        if (Auth::user()->id == 1) {
             return response()->json([
-                'complaints' => $complaints->load(['branch', 'images', 'remarksHistories']),
+                'complaints' => Complaints::with(['branch', 'images', 'remarksHistories'])->get(),
                 'status' => 200,
                 'success' => true,
             ]);
         }else{
             return response()->json([
-                'status' => 404,
-
+                'complaints' => Complaints::with(['branch', 'images', 'remarksHistories'])->where('userID', Auth::user()->id)->get(),
+                'status' => 200,
+                'success' => true,
             ]);
         }
     }
@@ -189,7 +197,6 @@ class ComplaintsController extends Controller
             'complaint' => $complaint->load(['branch', 'images'])
         ]);
     }
-
 
     //Updating Branch & Remarks
     public function updateBranch(Request $request){

@@ -30,8 +30,10 @@ class Complaints extends Model
         return $this->hasMany(RemarksHistory::class, 'complaintID', 'complaintID');
     }
 
-    protected function getComplaintStatistics(){
+    protected function getComplaintStatistics()
+    {
         $year = 2026;
+
         $months = [
             1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
             5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
@@ -47,15 +49,21 @@ class Complaints extends Model
         }
 
         $query = "SELECT " . implode(", ", $totalCases) . ", " . implode(", ", $resolvedCases) . "
-          FROM complaints
-          WHERE YEAR(created_at) = {$year}";
+        FROM complaints
+        WHERE YEAR(created_at) = {$year}";
+
+        if (!auth()->user()->hasRole('Super Admin')) {
+            $userId = auth()->id();
+            $query .= " AND userID = {$userId}";
+        }
 
         $result = DB::select($query);
 
         return $result;
     }
 
-    protected function getComplaintStatusStatistics(){
+    protected function getComplaintStatusStatistics()
+    {
         $year = 2026;
 
         $months = [
@@ -70,20 +78,24 @@ class Complaints extends Model
 
         foreach ($months as $num => $name) {
             foreach ($statuses as $status) {
-                // For example: SUM(CASE WHEN MONTH(created_at) = 1 AND status='New' THEN 1 ELSE 0 END) AS January_New
-                $caseStatements[] = "SUM(CASE WHEN MONTH(created_at) = {$num} AND status = '{$status}' THEN 1 ELSE 0 END) AS `{$name}_{$status}`";
+                $caseStatements[] = "SUM(CASE WHEN MONTH(created_at) = {$num}
+                                AND status = '{$status}'
+                                THEN 1 ELSE 0 END) AS `{$name}_{$status}`";
             }
         }
 
-        // Build query
         $query = "SELECT " . implode(", ", $caseStatements) . "
-          FROM complaints
-          WHERE YEAR(created_at) = {$year}";
+        FROM complaints
+        WHERE YEAR(created_at) = {$year}";
 
-        // Execute
+        // Apply user filter if not Super Admin
+        if (!auth()->user()->hasRole('Super Admin')) {
+            $userId = auth()->id();
+            $query .= " AND userID = {$userId}";
+        }
+
         $result = DB::select($query);
 
         return $result;
-
     }
 }
