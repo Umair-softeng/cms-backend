@@ -37,6 +37,6 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::get('/dashboard/statusComparison', [\App\Http\Controllers\API\DashboardController::class, 'statusComplaints']);
     Route::get('/dashboard/allStatusComparison', [\App\Http\Controllers\API\DashboardController::class, 'allStatusComplaints']);
 
-
+    Route::get('/reports/{reportType}', [\App\Http\Controllers\API\HomeController::class, 'reports']);
 });
 //require __DIR__.'/auth.php';

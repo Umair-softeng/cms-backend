@@ -19,8 +19,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('roles')->get();
-        if ($users){
+        if(Auth::user()->hasRole('Super Admin')){
+            $users = User::with('roles')->get();
             return response()->json([
                 'success' => true,
                 'data' => $users,
@@ -28,12 +28,12 @@ class UserController extends Controller
 
             ]);
         }else{
-
             return response()->json([
-                'success' => false,
-                'message' => 'Users not found.'
+                'success' => true,
+                'message' => 'No Permission',
             ]);
         }
+
     }
 
     public function cardData(){
