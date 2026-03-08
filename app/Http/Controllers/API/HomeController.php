@@ -7,6 +7,7 @@ use App\Models\Branches;
 use App\Models\Complaints;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -78,17 +79,22 @@ class HomeController extends Controller
                 'message' => 'No Complaint Details Found',
             ]);
         }
-        $complaints = Complaints::whereBetween('created_at', [$startDate, $endDate])->get();
-        $allComplaints = Complaints::whereBetween('created_at', [$startDate, $endDate])->count();
+        $complaints = Complaints::whereBetween('created_at', [$startDate, $endDate])
+            ->when(!Auth::user()->hasRole('Super Admin'), function ($query) {
+                $query->where('userID', Auth::id());
+            })
+            ->get();
         $statusCounts = $complaints->groupBy('status')->map->count();
         $priorityCounts = $complaints->groupBy('priority')->map->count();
+
         return response()->json([
             'status' => $statusCounts,
             'priority' => $priorityCounts,
             'startDate' => $startDate,
             'endDate' => $endDate,
-            'total' => $allComplaints,
+            'total' => $complaints->count(),
         ]);
+
     }
 
 }
