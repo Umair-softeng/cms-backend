@@ -3,13 +3,19 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ComplaintsController;
 
-Route::get('/complaint/branches', [ComplaintsController::class, 'getBranchesDetails']);
-Route::post('/complaint/register', [ComplaintsController::class, 'register']);
+Route::prefix('complaint')->group(function () {
+    Route::get('/branches', [ComplaintsController::class, 'getBranchesDetails']);
+    Route::post('/register', [ComplaintsController::class, 'register']);
+    Route::get('/figures', [ComplaintsController::class, 'figures']);
+    Route::post('/feedback',[ComplaintsController::class, 'feedback']);
+    Route::get('/feedback-data',[ComplaintsController::class, 'feedbackData']);
+    Route::post('/update-remarks-user-staff', [\App\Http\Controllers\API\ComplaintsController::class, 'updateUserStaff']);
+
+});
+
 Route::get('/track-complaint/{trackingID}', [ComplaintsController::class, 'trackComplaint']);
 Route::get('/track-cnic/{cnic}', [ComplaintsController::class, 'trackCnic']);
-Route::get('/complaint/figures', [ComplaintsController::class, 'figures']);
-Route::post('/complaint/feedback',[\App\Http\Controllers\API\ComplaintsController::class, 'feedback']);
-Route::get('/complaint/feedback-data',[\App\Http\Controllers\API\ComplaintsController::class, 'feedbackData']);
+
 Route::post('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
 Route::post('/logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth:sanctum');

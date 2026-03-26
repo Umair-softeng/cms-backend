@@ -16,4 +16,9 @@ class RemarksHistory extends Model
     {
         return $this->belongsTo(Complaints::class, 'complaintID', 'complaintID');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(RemarksHistory::class, 'createdByUserID', 'id');
+    }
 }

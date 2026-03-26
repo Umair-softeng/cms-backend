@@ -6,8 +6,8 @@ use App\Helpers\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ComplaintRegister;
 use App\Models\Branches;
-use App\Models\Complaints;
 use App\Models\ComplaintImages;
+use App\Models\Complaints;
 use App\Models\Feedback;
 use App\Models\RemarksHistory;
 use App\Models\User;
@@ -167,7 +167,9 @@ class ComplaintsController extends Controller
     public function getComplaints(){
         if (Auth::user()->id == 1) {
             return response()->json([
-                'complaints' => Complaints::with(['branch', 'images', 'remarksHistories'])->get(),
+                'complaints' => Complaints::with(['branch', 'images', 'remarksHistories'])
+                    ->orderBy('created_at', 'desc')
+                    ->get(),
                 'status' => 200,
                 'success' => true,
             ]);
@@ -185,18 +187,33 @@ class ComplaintsController extends Controller
     {
         $complaint = Complaints::where('complaintID', $request->complaintID)->firstOrFail();
 
-        $oldRemarks = $complaint->remarks; // save old remarks
+        $oldRemarks = $complaint->remarks;
 
         $complaint->update([
             'status' => $request->status,
             'remarks' => $request->remarks,
         ]);
 
+        if($request->hasFile('images')){
+            foreach($request->file('images') as $file){
+                $fileName = "Evidence-{$complaint->complaintID}-".time()."_".uniqid().".".$file->getClientOriginalExtension();
+                $file->move(storage_path('app/public/evidence'), $fileName);
+
+                ComplaintImages::create([
+                    'complaintID' => $complaint->complaintID,
+                    'image' => $fileName,
+                    'type' => "Evidence",
+                ]);
+            }
+        }
+
         if(!empty($request->remarks) && $request->remarks !== $oldRemarks) {
             RemarksHistory::create([
                 'complaintID' => $complaint->complaintID,
                 'remarks' => $request->remarks,
                 'created_at' => now(),
+                'createdByUserName' => $request->isPublic === false ? "MCQ Staff" : "Citizen"
+
             ]);
         }
 
@@ -223,6 +240,8 @@ class ComplaintsController extends Controller
                 'complaintID' => $complaint->complaintID,
                 'remarks' => $request->remarks,
                 'created_at' => now(),
+                'createdByUserName' => $request->isPublic === false ? "MCQ Staff" : "Citizen"
+
             ]);
         }
 
@@ -291,5 +310,30 @@ class ComplaintsController extends Controller
                 'message' => 'No Record Found'
             ]);
         }
+    }
+
+    //Complaint User & Staff Chats
+    public function updateUserStaff(Request $request){
+        $complaint = Complaints::where('complaintID', $request->complaintID)->firstOrFail();
+        $oldRemarks = $complaint->remarks;
+
+        $complaint->update([
+            'remarks' => $request->remarks,
+        ]);
+
+        if(!empty($request->remarks) && $request->remarks !== $oldRemarks) {
+            RemarksHistory::create([
+                'complaintID' => $complaint->complaintID,
+                'remarks' => $request->remarks,
+                'created_at' => now(),
+                'createdByUserName' => $request->isPublic === false ? "MCQ Staff" : "Citizen"
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Remarks updated successfully!',
+            'complaint' => $complaint->load(['branch', 'images'])
+        ]);
     }
 }

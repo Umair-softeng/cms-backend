@@ -42,4 +42,12 @@ class User extends Authenticatable
     public function complaints(){
         return $this->hasMany(Complaints::class);
     }
+
+    public function complaintImages(){
+        return $this->hasMany(ComplaintImages::class, 'createdByUserID','id');
+    }
+
+    public function remarksHistory(){
+        return $this->hasMany(RemarksHistory::class, 'createdByUserID','id');
+    }
 }

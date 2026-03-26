@@ -17,4 +17,9 @@ class ComplaintImages extends Model
         return $this->belongsTo(Complaints::class, 'complaintID', 'complaintID');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(ComplaintImages::class, 'createdByUserID', 'id');
+    }
+
 }
