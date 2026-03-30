@@ -212,7 +212,7 @@ class ComplaintsController extends Controller
                 'complaintID' => $complaint->complaintID,
                 'remarks' => $request->remarks,
                 'created_at' => now(),
-                'createdByUserName' => $request->isPublic === false ? "MCQ Staff" : "Citizen"
+                'createdByUserName' => $request->isPublic == 0 ? "MCQ" : "Citizen"
 
             ]);
         }
@@ -240,7 +240,7 @@ class ComplaintsController extends Controller
                 'complaintID' => $complaint->complaintID,
                 'remarks' => $request->remarks,
                 'created_at' => now(),
-                'createdByUserName' => $request->isPublic === false ? "MCQ Staff" : "Citizen"
+                'createdByUserName' => $request->isPublic == 0 ? "MCQ" : "Citizen"
 
             ]);
         }
@@ -326,7 +326,7 @@ class ComplaintsController extends Controller
                 'complaintID' => $complaint->complaintID,
                 'remarks' => $request->remarks,
                 'created_at' => now(),
-                'createdByUserName' => $request->isPublic === false ? "MCQ Staff" : "Citizen"
+                'createdByUserName' => $request->isPublic == 0 ? "MCQ" : "Citizen"
             ]);
         }
 

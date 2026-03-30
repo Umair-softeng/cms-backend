@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('remarksHistory', function (Blueprint $table) {
             $table->id('remarksHistoryID');
             $table->foreignId('complaintID')->constrained('complaints', 'complaintID');
-            $table->enum('createdByUserName' , ['MCQ Staff', 'Citizen']);
+            $table->enum('createdByUserName' , ['MCQ', 'Citizen']);
             $table->longText('remarks');
-            $table->boolean('isPublic')->default(false);
             $table->timestamps();
         });
     }
