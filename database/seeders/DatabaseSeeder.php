@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             BranchesSeeder::class,
             RoleSeeder::class,
-            ComplaintSeeder::class
+//            ComplaintSeeder::class
         ]);
     }
 }
