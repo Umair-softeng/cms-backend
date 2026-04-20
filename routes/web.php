@@ -4,17 +4,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ComplaintsController;
 
 Route::prefix('complaint')->group(function () {
-    Route::get('/branches', [ComplaintsController::class, 'getBranchesDetails']);
-    Route::post('/register', [ComplaintsController::class, 'register']);
-    Route::get('/figures', [ComplaintsController::class, 'figures']);
-    Route::post('/feedback',[ComplaintsController::class, 'feedback']);
-    Route::get('/feedback-data',[ComplaintsController::class, 'feedbackData']);
-    Route::post('/update-remarks-user-staff', [\App\Http\Controllers\API\ComplaintsController::class, 'updateUserStaff']);
+    Route::get('/branches', [ComplaintsController::class, 'getBranchesDetails'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+    Route::post('/register', [ComplaintsController::class, 'register'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+    Route::get('/figures', [ComplaintsController::class, 'figures'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+    Route::post('/feedback',[ComplaintsController::class, 'feedback'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+    Route::get('/feedback-data',[ComplaintsController::class, 'feedbackData'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+    Route::post('/update-remarks-user-staff', [\App\Http\Controllers\API\ComplaintsController::class, 'updateUserStaff'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
 });
 
-Route::get('/track-complaint/{trackingID}', [ComplaintsController::class, 'trackComplaint']);
-Route::get('/track-cnic/{cnic}', [ComplaintsController::class, 'trackCnic']);
+Route::get('/track-complaint/{trackingID}', [ComplaintsController::class, 'trackComplaint'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+Route::get('/track-cnic/{cnic}', [ComplaintsController::class, 'trackCnic'])->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
 Route::post('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
 Route::post('/logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
