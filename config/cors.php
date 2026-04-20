@@ -12,7 +12,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:3000', 'https://app.mcq.gob.pk'],
+    'allowed_origins' => ['http://localhost:3000', 'https://complains.mcq.gob.pk'],
 
     'allowed_headers' => ['*'],
 
