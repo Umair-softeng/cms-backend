@@ -9,6 +9,7 @@ use App\Models\Branches;
 use App\Models\Complaints;
 use App\Models\Module;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
         if(Auth::user()->hasRole('Super Admin')){
             $users = User::with('roles')->get();
@@ -36,7 +37,8 @@ class UserController extends Controller
 
     }
 
-    public function cardData(){
+    public function cardData(): JsonResponse
+    {
         $totalUsers = User::count();
         $totalActive = User::where('status', 'Active')->count();
         $totalInActive = User::where('status', 'In-Active')->count();
@@ -49,7 +51,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function store(UserStoreRequest $request)
+    public function store(UserStoreRequest $request): JsonResponse
     {
         DB::beginTransaction();
 
@@ -69,7 +71,7 @@ class UserController extends Controller
                 'success' => true,
                 'message' => 'User created successfully',
                 'user' => $user->fresh('roles'),
-            ], 201); // ✅ CREATED
+            ], 201);
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -77,12 +79,11 @@ class UserController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create user',
-                // 'error' => $e->getMessage(), // enable only in dev
             ], 500);
         }
     }
 
-    public function show(User $user)
+    public function show(User $user): JsonResponse
     {
         if ($user){
             return response()->json([
@@ -94,11 +95,9 @@ class UserController extends Controller
                 'message' => 'User not found.'
             ]);
         }
-
-
     }
 
-    public function update(UserUpdateRequest $request, User $user)
+    public function update(UserUpdateRequest $request, User $user): JsonResponse
     {
         DB::beginTransaction();
         try {
@@ -123,9 +122,8 @@ class UserController extends Controller
         }
     }
 
-    public function destroy(User $user)
+    public function destroy(User $user): JsonResponse
     {
-        // ⛔ Prevent deletion of system reserved users
         if ((int) $user->system_reserve === 1) {
             return response()->json([
                 'success' => false,
@@ -136,7 +134,6 @@ class UserController extends Controller
         DB::beginTransaction();
 
         try {
-            // ✅ Detach all roles (model_has_roles)
             $user->roles()->detach();
 
             // Optional: detach permissions if you use direct permissions on users
@@ -144,7 +141,6 @@ class UserController extends Controller
                 $user->permissions()->detach();
             }
 
-            // ✅ Delete user
             $user->delete();
 
             DB::commit();
@@ -165,7 +161,7 @@ class UserController extends Controller
         }
     }
 
-    public function status(Request $request, $id)
+    public function status(Request $request, $id): JsonResponse
     {
         $user = User::findOrFail($id);
 
@@ -173,7 +169,7 @@ class UserController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'This user is system reserved and cannot be updated',
-            ], 403); // 🔴 IMPORTANT
+            ], 403);
         }
 
         $user->update(['status' => $request->status]);
@@ -185,7 +181,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function loggedUser()
+    public function loggedUser(): JsonResponse
     {
         $user = Auth::user()->load('roles');
 

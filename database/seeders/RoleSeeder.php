@@ -403,7 +403,7 @@ class RoleSeeder extends Seeder
             'name' => 'Electric Branch',
             'email' => 'electric_branch@mcq.gob.pk',
             'password' => Hash::make('electric@123'),
-            'branchID' => 1,
+            'branchID' => 2,
             'system_reserve' => false
 
 
@@ -422,7 +422,7 @@ class RoleSeeder extends Seeder
             'name' => 'Record Branch',
             'email' => 'record_branch@mcq.gob.pk',
             'password' => Hash::make('record@123'),
-            'branchID' => 2,
+            'branchID' => 3,
             'system_reserve' => false
 
         ]);
@@ -440,7 +440,7 @@ class RoleSeeder extends Seeder
             'name' => 'Fire Brigade Branch',
             'email' => 'fire_branch@mcq.gob.pk',
             'password' => Hash::make('fire@123'),
-            'branchID' => 3,
+            'branchID' => 4,
             'system_reserve' => false
 
         ]);
@@ -458,7 +458,7 @@ class RoleSeeder extends Seeder
             'name' => 'Anti-Encroachment Branch',
             'email' => 'encroachment@mcq.gob.pk',
             'password' => Hash::make('encroachment@123'),
-            'branchID' => 4,
+            'branchID' => 5,
             'system_reserve' => false
 
         ]);
@@ -476,7 +476,7 @@ class RoleSeeder extends Seeder
             'name' => 'Building Branch',
             'email' => 'building_branch@mcq.gob.pk',
             'password' => Hash::make('building@123'),
-            'branchID' => 5,
+            'branchID' => 6,
             'system_reserve' => false
 
         ]);
@@ -494,7 +494,7 @@ class RoleSeeder extends Seeder
             'name' => 'Transport Branch',
             'email' => 'transport_branch@mcq.gob.pk',
             'password' => Hash::make('transport@123'),
-            'branchID' => 6,
+            'branchID' => 7,
             'system_reserve' => false
 
         ]);
@@ -512,7 +512,7 @@ class RoleSeeder extends Seeder
             'name' => 'Sanitation Branch',
             'email' => 'sanitation_branch@mcq.gob.pk',
             'password' => Hash::make('sanitation@123'),
-            'branchID' => 7,
+            'branchID' => 8,
             'system_reserve' => false
 
         ]);
@@ -530,7 +530,7 @@ class RoleSeeder extends Seeder
             'name' => 'Taxation Branch',
             'email' => 'taxation_branch@mcq.gob.pk',
             'password' => Hash::make('taxation@123'),
-            'branchID' => 8,
+            'branchID' => 9,
             'system_reserve' => false
 
         ]);
@@ -548,7 +548,7 @@ class RoleSeeder extends Seeder
             'name' => 'Health Branch',
             'email' => 'health_branch@mcq.gob.pk',
             'password' => Hash::make('health@123'),
-            'branchID' => 9,
+            'branchID' => 10,
             'system_reserve' => false
 
         ]);
@@ -566,7 +566,7 @@ class RoleSeeder extends Seeder
             'name' => 'Admin Branch',
             'email' => 'admin_branch@mcq.gob.pk',
             'password' => Hash::make('admin@123'),
-            'branchID' => 10,
+            'branchID' => 11,
             'system_reserve' => false
 
         ]);
@@ -582,7 +582,7 @@ class RoleSeeder extends Seeder
             'name' => 'MT Branch',
             'email' => 'mt_branch@mcq.gob.pk',
             'password' => Hash::make('mt@123'),
-            'branchID' => 11,
+            'branchID' => 12,
             'system_reserve' => false
 
         ]);
@@ -600,7 +600,7 @@ class RoleSeeder extends Seeder
             'name' => 'Account Branch',
             'email' => 'account_branch@mcq.gob.pk',
             'password' => Hash::make('account@123'),
-            'branchID' => 12,
+            'branchID' => 13,
             'system_reserve' => false
 
         ]);
@@ -618,7 +618,7 @@ class RoleSeeder extends Seeder
             'name' => 'Engineering Branch',
             'email' => 'engineering_branch@mcq.gob.pk',
             'password' => Hash::make('engineering@123'),
-            'branchID' => 13,
+            'branchID' => 14,
             'system_reserve' => false
 
         ]);
@@ -636,7 +636,7 @@ class RoleSeeder extends Seeder
             'name' => 'Veterinary Branch',
             'email' => 'veterinary_branch@mcq.gob.pk',
             'password' => Hash::make('veterinary@123'),
-            'branchID' => 14,
+            'branchID' => 15,
             'system_reserve' => false
 
         ]);
@@ -654,7 +654,7 @@ class RoleSeeder extends Seeder
             'name' => 'Library Branch',
             'email' => 'library_branch@mcq.gob.pk',
             'password' => Hash::make('library@123'),
-            'branchID' => 15,
+            'branchID' => 16,
             'system_reserve' => false
 
         ]);
@@ -672,7 +672,7 @@ class RoleSeeder extends Seeder
             'name' => 'MCQ Schools',
             'email' => 'schools_mcq@mcq.gob.pk',
             'password' => Hash::make('school@123'),
-            'branchID' => 16,
+            'branchID' => 17,
             'system_reserve' => false
 
         ]);

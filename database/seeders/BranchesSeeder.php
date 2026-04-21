@@ -12,6 +12,7 @@ class BranchesSeeder extends Seeder
     public function run(): void
     {
         $branches = [
+            ['name_en' => 'Restricted ', 'name_ur' => '(محدود )'],
             ['name_en' => 'Electric ', 'name_ur' => '(الیکٹرک )'],
             ['name_en' => 'Record ', 'name_ur' => '(ریکارڈ )'],
             ['name_en' => 'Fire Brigade ', 'name_ur' => '(فائر بریگیڈ )'],

@@ -7,6 +7,7 @@ use App\Http\Requests\RoleStoreRequest;
 use App\Http\Requests\RoleUpdateRequest;
 use App\Models\Module;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
@@ -14,7 +15,7 @@ use Spatie\Permission\Models\Role;
 class RoleController extends Controller
 {
     //All Roles
-    public function index()
+    public function index(): JsonResponse
     {
         $roles = Role::where('id', '!=', 1)->with('permissions')->get();
         if ($roles) {
@@ -32,7 +33,8 @@ class RoleController extends Controller
     }
 
     //Roles Card Data
-    public function roleCardData(){
+    public function roleCardData(): JsonResponse
+    {
         $totalUsers = User::count();
         $totalActive = User::where('status', 'Active')->count();
         $totalInActive = User::where('status', 'In-Active')->count();
@@ -46,7 +48,7 @@ class RoleController extends Controller
     }
 
     //Getting All Moduules
-    public function getModules()
+    public function getModules(): JsonResponse
     {
         $modules = Module::all();
         if ($modules){
@@ -63,7 +65,7 @@ class RoleController extends Controller
     }
 
     //Store Role Data
-    public function store(RoleStoreRequest $request)
+    public function store(RoleStoreRequest $request): JsonResponse
     {
         DB::beginTransaction();
 
@@ -90,7 +92,7 @@ class RoleController extends Controller
     }
 
     //Edited Role
-    public function edit(Role $role)
+    public function edit(Role $role): JsonResponse
     {
         $role->load('permissions');
         $modules = Module::all();
@@ -102,7 +104,7 @@ class RoleController extends Controller
     }
 
    //Role Update
-    public function update(RoleUpdateRequest $request, Role $role)
+    public function update(RoleUpdateRequest $request, Role $role): JsonResponse
     {
         DB::beginTransaction();
 
@@ -131,7 +133,7 @@ class RoleController extends Controller
     }
 
     //Role Deletion
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $role = Role::find($id);
 
@@ -143,7 +145,6 @@ class RoleController extends Controller
             ]);
         }
 
-        // ⛔ system reserved role protection
         if ((int) $role->system_reserve == 1) {
             return response()->json([
                 'success' => false,
